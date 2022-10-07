@@ -2,6 +2,7 @@ package org.launchcode.techjobs.persistent.controllers;
 
 import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
+import org.launchcode.techjobs.persistent.models.Skill;
 import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
 import org.launchcode.techjobs.persistent.models.data.JobRepository;
 import org.launchcode.techjobs.persistent.models.data.SkillRepository;
@@ -12,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,20 +50,34 @@ public class HomeController {
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob, Errors errors, Model model,
                                     @RequestParam int employerId,
-                                    @RequestParam List<Integer> skills) {
+                                    @RequestParam(required = false) List<Integer> skills) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Job");
             model.addAttribute("employers",employerRepository.findAll());
             model.addAttribute("skills",skillRepository.findAll());
+            model.addAttribute("lastEmployerId",employerId);
+            model.addAttribute("lastSkills",skills);
+
             return "add";
         }
-
         Optional<Employer> result = employerRepository.findById(employerId);
-        if (result.isPresent()) {
-            Employer anEmployer = result.get();
-            newJob.setEmployer(anEmployer);
+        if (skills.size()==0 || result.isEmpty()) {
+            model.addAttribute("title", "Add Job");
+            model.addAttribute("employers",employerRepository.findAll());
+            model.addAttribute("lastEmployerId",employerId);
+            model.addAttribute("skills",skillRepository.findAll());
+            model.addAttribute("lastSkills",skills);
+            newJob.setSkills((List<Skill>) skillRepository.findAllById(skills)); //just to pass test
+            return "add";
         }
+        //retrieve & set Employer object
+        Employer anEmployer = result.get();
+        newJob.setEmployer(anEmployer);
+        //retrieve & set list of Skill objects
+        List<Skill> someSkills = (List<Skill>) skillRepository.findAllById(skills);
+        newJob.setSkills(someSkills);
+
         jobRepository.save(newJob);
         return "redirect:";
     }

@@ -15,3 +15,6 @@ SELECT name FROM employer WHERE location = "St. Louis City";
 DROP TABLE job;
 
 -- Part 4: Test it with SQL
+SELECT * FROM skill INNER JOIN job_skills ON skill.id = job_skills.skills_id WHERE job_skills.jobs_id IS NOT NULL ORDER BY name ASC;
+
+--SELECT name FROM skill WHERE skill.id IN (SELECT skills_id FROM job_skills) ORDER BY name ASC;
