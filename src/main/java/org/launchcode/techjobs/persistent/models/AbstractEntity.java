@@ -9,16 +9,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-//@MappedSuperclass
+@MappedSuperclass
 public abstract class AbstractEntity {
 
-//    @Id
-//    @GeneratedValue
+    @Id
+    @GeneratedValue
     private int id;
 
-//    @Valid
-//    @NotBlank(message = "Name cannot be blank")
-//    @Size(min=2,max=150,message = "Name must be 2-150 characters")
+    @NotBlank(message = "Name is required")
+    @Size(min=2,max=150,message = "Name must be 2-150 characters")
     private String name;
 
     public int getId() {
