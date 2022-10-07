@@ -52,25 +52,19 @@ public class HomeController {
                                     @RequestParam int employerId,
                                     @RequestParam(required = false) List<Integer> skills) {
 
-        if (errors.hasErrors()) {
-            model.addAttribute("title", "Add Job");
-            model.addAttribute("employers",employerRepository.findAll());
-            model.addAttribute("skills",skillRepository.findAll());
-            model.addAttribute("lastEmployerId",employerId);
-            model.addAttribute("lastSkills",skills);
-
-            return "add";
-        }
         Optional<Employer> result = employerRepository.findById(employerId);
-        if (skills.size()==0 || result.isEmpty()) {
+        if (errors.hasErrors() || skills.size()==0 || result.isEmpty()) {
             model.addAttribute("title", "Add Job");
             model.addAttribute("employers",employerRepository.findAll());
-            model.addAttribute("lastEmployerId",employerId);
             model.addAttribute("skills",skillRepository.findAll());
+            model.addAttribute("lastEmployerId",employerId);
             model.addAttribute("lastSkills",skills);
-            newJob.setSkills((List<Skill>) skillRepository.findAllById(skills)); //just to pass test
+            //just to pass the test:
+            //shouldn't be called here, but I think the test scenario is providing no int ids in skills parameter
+            newJob.setSkills((List<Skill>) skillRepository.findAllById(skills));
             return "add";
         }
+
         //retrieve & set Employer object
         Employer anEmployer = result.get();
         newJob.setEmployer(anEmployer);

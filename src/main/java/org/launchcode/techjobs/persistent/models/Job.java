@@ -40,6 +40,10 @@ public class Job extends AbstractEntity{
     }
 
     public void setSkills(List<Skill> skills) {
-        this.skills.addAll(skills);
+        for (Skill aSkill : skills) {
+            if (!this.skills.contains(aSkill)) {
+                this.skills.add(aSkill);
+            }
+        }
     }
 }
